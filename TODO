@@ -12,10 +12,11 @@ http://127.0.0.1:8000/products/suggest?name__completion=f
 docker compose
 drf
 elasticsearch
-celery + rabbitmq
 redis
-mongo (history) [1mln or 10Gb]
 minio
+
+mongo (history) [1mln or 10Gb]
+celery + rabbitmq
 
 
 
@@ -27,9 +28,6 @@ db.createCollection('mongolog', capped);
 db.mongolog.drop();
 
 db.createCollection("mongolog", {capped: true, size: 1000, max: 10})
-
-
-
 
 
 

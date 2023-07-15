@@ -1,3 +1,13 @@
 from django.contrib import admin
+from apps.models import Photo, Product
 
-# Register your models here.
+
+@admin.register(Photo)
+class PhotoModelAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Product)
+class ProductModelAdmin(admin.ModelAdmin):
+    pass
+

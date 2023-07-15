@@ -1,36 +1,70 @@
-#version: '3.8'
-#
-#services:
-#  web:
-#    build:
-#      context: .
-#      dockerfile: ./compose/django/Dockerfile
-#    image: django_web
-#    # '/start' is the shell script used to run the service
-#    command: /start
-#    # this volume is used to map the files and folders on the host to the container
-#    # so if we change code on the host, code in the docker container will also be changed
-#    volumes:
-#      - .:/app
-#    ports:
-#      - 8010:8000
-#    env_file:
-#      - .env
-#    depends_on:
-#      - redis
-#      - rabbitmq
-#      - db
-#
-#  db:
-#    image: postgres:15-alpine
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-#    environment:
-#      - POSTGRES_PASSWORD=1
-#
-#  redis:
-#    image: redis:alpine
-#
+version: '3.8'
+
+services:
+  web_service:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    ports:
+      - 8000:8001
+    env_file: env/.env
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - db_service
+      - minio_service
+      - redis_service
+  #      - rabbitmq
+  db_service:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file: env/.env
+
+  minio_service:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file: env/.env
+    command: server /data --console-address :9001
+    volumes:
+      - minio_data:/data
+
+  elasticsearch_service:
+    image: elasticsearch:7.14.0
+    ports:
+      - "9300:9300"
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+    depends_on:
+      - web_service
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  redis_service:
+    image: redis:alpine
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web_service
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+
+
 #  rabbitmq:
 #    image: rabbitmq:management
 #    container_name: rabbitmq
@@ -86,6 +120,10 @@
 #    depends_on:
 #      - redis
 #      - db
-#
-#volumes:
-#  postgres_data:
+
+volumes:
+  media_volume:
+  static_volume:
+  postgres_data:
+  minio_data:
+  esdata:

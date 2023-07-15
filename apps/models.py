@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, IntegerField, TextField, ForeignKey, CASCADE
+from django.db.models import Model, CharField, IntegerField, TextField, ForeignKey, CASCADE, ImageField
 
 
 class Category(Model):
@@ -10,3 +10,7 @@ class Product(Model):
     description = TextField()
     price = IntegerField(default=0)
     category = ForeignKey('Category', CASCADE)
+
+
+class Photo(Model):
+    image = ImageField(upload_to='photos/')
