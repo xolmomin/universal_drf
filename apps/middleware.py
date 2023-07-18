@@ -1,6 +1,6 @@
 # import logging
 # from django.utils.deprecation import MiddlewareMixin
-#
+# from root import settings
 # logger = logging.getLogger("mongolog.request")
 #
 #
@@ -17,7 +17,7 @@
 #     def process_request(self, request):
 #         import pymongo
 #
-#         myclient = pymongo.MongoClient("mongodb://admin:1@localhost:27017/?authSource=admin&authMechanism=SCRAM-SHA-1")
+#         myclient = pymongo.MongoClient(settings.MONGODB_URL)
 #
 #         mydict = {
 #             "client_ip": self.__get_client_ip(request),

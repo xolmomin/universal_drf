@@ -18,7 +18,7 @@ mongo (history) [1mln or 10Gb]
 celery + rabbitmq
 
 task
-1) mongo, celery, rabbitmq
+1) celery, rabbitmq
 2) 1mln data qoshish by faker
 3) create search product api for simple, index, elastic
 
